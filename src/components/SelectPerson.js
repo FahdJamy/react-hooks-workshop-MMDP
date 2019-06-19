@@ -1,32 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React from 'react';
 import { Dropdown, Divider } from 'semantic-ui-react';
 
+import { useHttp } from './hooks/custom';
+
 const SelectPerson = props => {
-    const [loadedPeople, setPeople] = useState([]);
-    const [isLoading, setLoading] = useState(false)
-
-    useEffect(() => {
-			console.log('mounted')
-			// Use effect runs when a component mounts. Similar to componentDidMount()
-			setLoading(true);
-			axios.get('https://swapi.co/api/people/')
-			.then(response => {
-					const peopleData = response.data.results.slice(0, 10);
-					setLoading(false)
-
-					setPeople(
-						peopleData.map((data, index) => ({
-							name: data.name,
-							id: index + 1,
-						}))
-					)
-				})
-				.catch(err => {
-					console.log(err);
-					setLoading(false);
-				})
-    }, []);
+    // Adding my custom hook to fetchdata
+		const [isLoading, userData] = useHttp('https://swapi.co/api/people/',[]);
+		let loadedPeople = userData ? userData.results.slice(0,10).map((data, index) => ({
+			name: data.name,
+			id: index + 1,
+		})) : [];
 
 		let content = <p>Loading people.....</p>;
 

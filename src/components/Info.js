@@ -1,38 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useEffect } from 'react';
 
+import { useHttp } from './hooks/custom';
 import Person from './Person';
 
 
 const PersonInfo = (props) => {
-    const [loadedPerson, setSelectedPerson] = useState({});
-    const [isLoading, setLoading] = useState(false);
+		// Adding my custom hook to fetchdata
+		const [isLoading, userData] = useHttp(
+			`https://swapi.co/api/people/${props.selectedPerson}`,
+			[props.selectedPerson],
+		);
+		let userInfo = null
 
-    useEffect(() => {
-			setLoading(true);
-			axios.get('https://swapi.co/api/people/' + props.selectedPerson)
-				.then(response => {
-					const {data} = response;
-					const userInfo = {
-						id: props.selectedPerson,
-						name: data.name,
-						height: data.height,
-						gender: data.gender,
-						mass: data.mass,
-						movieCount: data.films.length,
-						colors: {
-								hair: data.hair_color,
-						}
-					}
-
-				setLoading(false)
-				setSelectedPerson(userInfo)
-			})
-			.catch(err => {
-				console.log(err);
-				setLoading(false);
-			});
-    }, [props.selectedPerson]);
+		if (userData) {
+			userInfo = {
+				id: props.selectedPerson,
+				name: userData.name,
+				height: userData.height,
+				gender: userData.gender,
+				mass: userData.mass,
+				movieCount: userData.films.length,
+				colors: {
+						hair: userData.hair_color,
+				}
+			}
+		}
 
     useEffect(() => {
 			// This useEffect will be run when a component is going to unmount
@@ -44,19 +36,19 @@ const PersonInfo = (props) => {
 
     let content = <p>loading persons info</p>
 
-    if (!isLoading && loadedPerson.id) {
+    if (!isLoading && userInfo) {
 			content = (
 				<Person
-					name={loadedPerson.name}
-					gender={loadedPerson.gender}
-					mass={loadedPerson.mass}
-					height={loadedPerson.height}
-					hairColor={loadedPerson.colors.hair}
-					skinColor={loadedPerson.colors.skin}
-					movieCount={loadedPerson.movieCount}
+					name={userInfo.name}
+					gender={userInfo.gender}
+					mass={userInfo.mass}
+					height={userInfo.height}
+					hairColor={userInfo.colors.hair}
+					skinColor={userInfo.colors.skin}
+					movieCount={userInfo.movieCount}
 				/>
 			)
-    } else if (!isLoading && !loadedPerson.id) {
+    } else if (!isLoading && !userInfo) {
 			content = <p>Failed fetching😔</p>
 		}
 		

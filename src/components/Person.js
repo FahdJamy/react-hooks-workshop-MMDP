@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Icon, Grid, Image, Segment, Header } from "semantic-ui-react";
+import { Card, Icon, Grid, Image, Segment } from "semantic-ui-react";
 
 const Person = props => {
 	const extra = (
