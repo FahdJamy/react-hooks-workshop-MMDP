@@ -1,25 +1,44 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { Button } from 'semantic-ui-react';
 
-function App() {
+import NavHeader from './components/Header';
+import SelectPerson from './components/SelectPerson';
+import PersonInfo from './components/Info';
+
+const App = () => {
+  const [userId, selectedPerson] = useState(1);
+  // We will use this to dismiss a component and exhibit componentWillUnmount in PersonInfo Component
+  const [dismissed, setDismissed] = useState(false);
+
+  const charSelectedHandler = (e, { value }) => {
+    selectedPerson(value);
+  };
+
+  const dismissUserInfoComponent= () => { setDismissed(true) };
+
+  let content = (
+    <>
+      <SelectPerson
+        value={userId}
+        onPersonSelected={charSelectedHandler}/>
+      <PersonInfo selectedPerson={userId}/>
+      <p></p>
+      <p></p>
+      <Button
+        fluid
+        basic
+        color='red'
+        onClick={dismissUserInfoComponent}
+      > Dismiss User Info Component </Button>
+    </>
+  );
+
+  if (dismissed) content = <h1>No person to display!</h1>;
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <NavHeader>
+      {content}
+    </NavHeader>
   );
 }
 
